@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+  
+  <ProgressBar android:id="@+android:id/loading"
+        android:layout_height="wrap_content" android:layout_width="wrap_content"
+        android:visibility="visible" android:layout_gravity="center_vertical|center_horizontal"
+        android:gravity="center_vertical|center_horizontal"
+        android:layout_centerInParent="true"
+        
+         />
+
+ <ListView
+     android:id="@+id/list"
+     android:layout_width="fill_parent"
+     android:layout_height="wrap_content"
+     android:layout_above="@+id/footer"
+     android:divider="#b5b5b5"
+     android:dividerHeight="1dp"
+     android:listSelector="@drawable/list_selector" />
+
+  <RelativeLayout
+    android:id="@+id/footer"
+    android:layout_width="fill_parent"
+    android:layout_height="50dip"
+    android:orientation="horizontal"
+    android:layout_alignParentBottom="true"
+   	android:background="@drawable/footerbg">
+
+        <TextView
+            android:id="@+id/songTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:paddingLeft="2dp"
+            android:text="mos7af.com"
+            android:textColor="#04b3d2"
+            android:textSize="16dp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+  
+</RelativeLayout>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+  <ProgressBar android:id="@+android:id/progress_small1"
+        android:layout_height="wrap_content" android:layout_width="wrap_content"
+        android:visibility="visible" android:layout_gravity="center_vertical|center_horizontal"
+        android:gravity="center_vertical|center_horizontal"
+        android:layout_centerInParent="true"
+         />
+ <ListView
+        android:id="@+id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:divider="#b5b5b5"
+        android:dividerHeight="3dp"
+        android:listSelector="@drawable/list_selector" 
+      
+       
+        />
+    
+</RelativeLayout>

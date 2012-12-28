@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<style name="WrapBoth">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+	</style>
+	
+	<style name="WrapHeight">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+	</style>
+
+	<style name="LayoutWrap">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">fill_parent</item>	
+		<item name="android:orientation">vertical</item>		
+	</style>
+		
+	<style name="AddressListWrap">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">wrap_content</item>	
+	</style>
+		
+	<style name="AddressBookLabel">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:padding">10dp</item>
+		<item name="android:background">#421010</item>
+		
+	</style>
+	
+	<style name="AddressBookList" parent="style/WrapHeight">
+	</style>
+
+	<style name="AddressBookListItem" parent="style/WrapHeight">
+		<item name="android:padding">10dp</item>
+	</style>
+	
+	<style name="AddressBookItemName" parent="style/WrapBoth">
+		<item name="android:textSize">18sp</item>
+	</style>
+	
+	<style name="AddressBookImageItem" parent="style/WrapBoth">
+		<item name="android:layout_marginLeft">5dp</item>
+		<item name="android:layout_marginRight">5dp</item>
+	</style>
+
+</resources>
