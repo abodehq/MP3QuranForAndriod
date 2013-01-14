@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"  	
-  style="@style/AddressBookListItem"
-  android:layout_width="fill_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lySuraItem"
+    style="@style/AddressBookListItem"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/list_selector"
     android:orientation="horizontal"
-    android:padding="5dip"
-  >
+    android:padding="5dip" >
 
   	<ImageView
   	    android:id="@+id/sura_icon"
@@ -42,6 +42,6 @@
   	    android:textColor="#343434"
   	    android:textSize="13sp" />
 
-  	
+  
   
 </RelativeLayout>

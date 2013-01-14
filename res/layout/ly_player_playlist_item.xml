@@ -53,5 +53,12 @@
         android:text="Suras Name ..."
         android:textColor="#343434"
         android:textSize="13sp" />
+   <ImageView
+  	    android:id="@+id/pin_icon"
+  	    style="@style/AddressBookImageItem"
+  	    android:layout_alignParentRight="true"
+  	    android:layout_centerVertical="true"
+  	    android:src="@drawable/pin_icon"
+  	     />
 
 </RelativeLayout>

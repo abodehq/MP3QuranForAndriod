@@ -1,6 +1,7 @@
 package com.mos7af.mp3quran;
 
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -14,6 +15,7 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ImageButton;
@@ -53,9 +55,36 @@ public class PlayerActivity extends Activity implements OnCompletionListener, Se
 	private ArrayList<HashMap<String, String>> songsList = new ArrayList<HashMap<String, String>>();
 	private boolean isPrepared =false;
 	
-	
+	private boolean isActive = true;
 	private ImageLoader imageLoader;
-	 
+	 private void CreateMediaPlayer()
+	 {
+			// Mediaplayer
+			mp = new MediaPlayer();
+			mp.setOnCompletionListener(this); // Important
+			mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+			    @Override
+			    public void onPrepared(MediaPlayer mp) {
+			    	isPrepared = true;
+			    }
+			});
+			mp.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+				
+				@Override
+				public boolean onError(MediaPlayer mp, int what, int extra) {
+					if(!Utils.isConnectingToInternet(PlayerActivity.this))
+		  	        {
+		  				showAlertDialog(PlayerActivity.this, "No Internet Connection",
+		  						"You don't have internet connection.", false);
+		  	        }else
+		  	        {
+		  	        	showAlertDialog(PlayerActivity.this, "play Error!!",
+		  						"An error has occurred attempting to play sura!!", false);
+		  	        }
+					return false;
+				}
+			});
+	 }
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -79,37 +108,14 @@ public class PlayerActivity extends Activity implements OnCompletionListener, Se
 		songCurrentDurationLabel = (TextView) findViewById(R.id.songCurrentDurationLabel);
 		songTotalDurationLabel = (TextView) findViewById(R.id.songTotalDurationLabel);
 		
-		// Mediaplayer
-		mp = new MediaPlayer();
+	
 		
 		songManager = SuraslistManager.getInstance();
 		utils = new Utilities();
 		
 		// Listeners
 		songProgressBar.setOnSeekBarChangeListener(this); // Important
-		mp.setOnCompletionListener(this); // Important
-		mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-		    @Override
-		    public void onPrepared(MediaPlayer mp) {
-		    	isPrepared = true;
-		    }
-		});
-		mp.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-			
-			@Override
-			public boolean onError(MediaPlayer mp, int what, int extra) {
-				if(!Utils.isConnectingToInternet(PlayerActivity.this))
-	  	        {
-	  				showAlertDialog(PlayerActivity.this, "No Internet Connection",
-	  						"You don't have internet connection.", false);
-	  	        }else
-	  	        {
-	  	        	showAlertDialog(PlayerActivity.this, "play Error!!",
-	  						"An error has occurred attempting to play sura!!", false);
-	  	        }
-				return false;
-			}
-		});
+		CreateMediaPlayer();
 	
 		
 		// Getting all songs list
@@ -127,20 +133,28 @@ public class PlayerActivity extends Activity implements OnCompletionListener, Se
 			
 			@Override
 			public void onClick(View arg0) {
-				// check for already playing
-				if(mp.isPlaying()){
-					if(mp!=null){
-						mp.pause();
-						// Changing button image to play button
-						btnPlay.setImageResource(R.drawable.btn_play);
+				if(isActive)
+				{
+					
+					// check for already playing
+					if(mp.isPlaying()){
+						if(mp!=null){
+							mp.pause();
+							// Changing button image to play button
+							btnPlay.setImageResource(R.drawable.btn_play);
+						}
+					}else{
+						// Resume song
+						if(mp!=null){
+							mp.start();
+							// Changing button image to pause button
+							btnPlay.setImageResource(R.drawable.btn_pause);
+						}
 					}
-				}else{
-					// Resume song
-					if(mp!=null){
-						mp.start();
-						// Changing button image to pause button
-						btnPlay.setImageResource(R.drawable.btn_pause);
-					}
+				}else
+				{
+					
+					playSong(currentSongIndex);
 				}
 				
 			}
@@ -154,15 +168,22 @@ public class PlayerActivity extends Activity implements OnCompletionListener, Se
 			
 			@Override
 			public void onClick(View arg0) {
-				// get current song position				
-				int currentPosition = mp.getCurrentPosition();
-				// check if seekForward time is lesser than song duration
-				if(currentPosition + seekForwardTime <= mp.getDuration()){
-					// forward song
-					mp.seekTo(currentPosition + seekForwardTime);
-				}else{
-					// forward to end position
-					mp.seekTo(mp.getDuration());
+				if(isActive)
+				{
+					// get current song position				
+					int currentPosition = mp.getCurrentPosition();
+					// check if seekForward time is lesser than song duration
+					if(currentPosition + seekForwardTime <= mp.getDuration()){
+						// forward song
+						mp.seekTo(currentPosition + seekForwardTime);
+					}else{
+						// forward to end position
+						mp.seekTo(mp.getDuration());
+					}
+				}else
+				{
+					
+					playSong(currentSongIndex);
 				}
 			}
 		});
@@ -175,15 +196,22 @@ public class PlayerActivity extends Activity implements OnCompletionListener, Se
 			
 			@Override
 			public void onClick(View arg0) {
-				// get current song position				
-				int currentPosition = mp.getCurrentPosition();
-				// check if seekBackward time is greater than 0 sec
-				if(currentPosition - seekBackwardTime >= 0){
-					// forward song
-					mp.seekTo(currentPosition - seekBackwardTime);
-				}else{
-					// backward to starting position
-					mp.seekTo(0);
+				if(isActive)
+				{
+					// get current song position				
+					int currentPosition = mp.getCurrentPosition();
+					// check if seekBackward time is greater than 0 sec
+					if(currentPosition - seekBackwardTime >= 0){
+						// forward song
+						mp.seekTo(currentPosition - seekBackwardTime);
+					}else{
+						// backward to starting position
+						mp.seekTo(0);
+					}	
+				}else
+				{
+					
+					playSong(currentSongIndex);
 				}
 				
 			}
@@ -322,11 +350,30 @@ public class PlayerActivity extends Activity implements OnCompletionListener, Se
 	 * */
 	ProgressDialog dialog;
 	public void  playSong(int songIndex){
+		
+		isActive = true;
 		songsList = songManager.getPlayList();
-		 dialog = ProgressDialog.show(this, "", 
-                "Loading. Please wait...", true);
+		dialog  = new ProgressDialog(PlayerActivity.this);
+		dialog.setButton("CANCEL", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            		
+            	dialog.dismiss();
+            	getTask.cancel(true);
+            	
+            	mp.release();
+            	CreateMediaPlayer();
+            	isActive = false;
+            }
+        });
+		dialog.setMessage("Loading. Please wait...");
+		 dialog.show();
+		 
 		
 		isPrepared = false;
+		
+		
 		 getTask = new GetTask();
 	     getTask.execute();
 
@@ -400,14 +447,22 @@ public class PlayerActivity extends Activity implements OnCompletionListener, Se
 		
 		
 		mHandler.removeCallbacks(mUpdateTimeTask);
-		int totalDuration = mp.getDuration();
-		int currentPosition = utils.progressToTimer(seekBar.getProgress(), totalDuration);
-		
-		// forward or backward to certain seconds
-		mp.seekTo(currentPosition);
-		
-		// update timer progress again
-		updateProgressBar();
+		if(isActive)
+		{
+			int totalDuration = mp.getDuration();
+			int currentPosition = utils.progressToTimer(seekBar.getProgress(), totalDuration);
+			
+			// forward or backward to certain seconds
+			mp.seekTo(currentPosition);
+			
+			// update timer progress again
+			updateProgressBar();
+		}
+		else
+		{
+			
+			playSong(currentSongIndex);
+		}
     }
 
 	/**
@@ -511,7 +566,13 @@ public class PlayerActivity extends Activity implements OnCompletionListener, Se
 	  		                
 	  		try {
 	  		       
-	  			String songPath = songsList.get(currentSongIndex).get("suraSoundPath");   
+	  			String songPath = songsList.get(currentSongIndex).get("suraSoundPath");  
+	  			String localPath = Environment.getExternalStorageDirectory()+"/MP3Quran/"+songsList.get(currentSongIndex).get("reciterId");
+	  			File file = new File(localPath,songsList.get(currentSongIndex).get("suraId")+ ".mp3" );
+	  			if (file.exists()) {
+	  				songPath = localPath+"/"+songsList.get(currentSongIndex).get("suraId")+ ".mp3";
+	  			}
+	  			// Toast.makeText(PlayerActivity.this ,songPath, Toast.LENGTH_SHORT).show();
 	  			mp.reset();
 				mp.setDataSource(songPath);
 				mp.prepare();   
@@ -546,7 +607,7 @@ public class PlayerActivity extends Activity implements OnCompletionListener, Se
 	      }
 	    public void ShowErrorDialog()
 	    {
-	    	showAlertDialog(this, "No Internet Connection",
+	    	showAlertDialog(PlayerActivity.this, "No Internet Connection",
 					"You don't have internet connection.", false);
 	    }
 	    private void showAlertDialog(Context context, String title, String message, Boolean status) 
@@ -567,7 +628,9 @@ public class PlayerActivity extends Activity implements OnCompletionListener, Se
 			 
 			    	  if(Utils.isConnectingToInternet(PlayerActivity.this))
 			          {
-			    		  playSong(currentSongIndex);
+			    		  mp.release();
+			            CreateMediaPlayer();
+			    		 playSong(currentSongIndex);
 			          	
 			          }else
 			          {

@@ -27,11 +27,16 @@ import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.InputFilter;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
@@ -81,7 +86,7 @@ public class SurasActivity extends Activity {
           iconContextMenu.addItem(res, "play only", R.drawable.ic_1, MENU_ITEM_1_ACTION);
           iconContextMenu.addItem(res, "play", R.drawable.ic_2, MENU_ITEM_2_ACTION);
           iconContextMenu.addItem(res, "Add to playlist", R.drawable.ic_1, MENU_ITEM_3_ACTION);
-          iconContextMenu.addItem(res, "download", R.drawable.ic_3, MENU_ITEM_4_ACTION);
+          iconContextMenu.addItem(res, "download to play locally", R.drawable.ic_3, MENU_ITEM_4_ACTION);
           
           
           //set onclick listener for context menu
@@ -112,37 +117,55 @@ public class SurasActivity extends Activity {
      					break;
      				case MENU_ITEM_4_ACTION:
      					_sura = surasList.get(selecteduraIndex);
-     					Toast.makeText(getApplicationContext(), "Start Download "+_sura.get("suraNameAr")+" - "+_sura.get("suraNameEn"), 1000).show();
-     					SurasActivity.suraPath =_sura.get("suraSoundPath").toString(); 
-     					 mProgressDialog.setMessage("/sdcard/MP3Quran/  ::"+_sura.get("suraNameAr")+" - "+_sura.get("suraNameEn"));
-     					DownloadFile downloadFile = new DownloadFile();
-     					downloadFile.execute(SurasActivity.suraPath,_sura.get("suraNameAr")+" - "+_sura.get("suraNameEn")+".mp3");
+     					String localPath = Environment.getExternalStorageDirectory()+"/MP3Quran/"+_sura.get("reciterId");
+     					File file = new File(localPath,_sura.get("suraId")+ ".mp3" );
+     					if (file.exists()) {
+     						ShowRenameDialog(_sura);
+     	            	}else
+     	            	{
+     	            		DownloadSura(_sura);
+     	            	}
      					break;
      				
      				}
      			}
      		});
           db = new DatabaseHandler(getApplicationContext());
+          RelativeLayout relativeclic1 =(RelativeLayout)findViewById(R.id.footer);
+          relativeclic1.setOnClickListener(new View.OnClickListener(){
+              @Override
+              public void onClick(View v){
+            	  reciter_id = "-1";
+            	  onResume() ;
+              }
+          });
+    }
+    private void DownloadSura(HashMap<String, String> _sura)
+    {
+    	Toast.makeText(getApplicationContext(), "Start Download "+_sura.get("suraNameAr")+" - "+_sura.get("suraNameEn"), 1000).show();
+			SurasActivity.suraPath =_sura.get("suraSoundPath").toString(); 
+		 	mProgressDialog.setMessage(_sura.get("suraNameAr")+" - "+_sura.get("suraNameEn"));
+		 	DownloadFile downloadFile = new DownloadFile();
+			downloadFile.execute(SurasActivity.suraPath,_sura.get("suraNameAr")+" - "+_sura.get("suraNameEn"),_sura.get("reciterId"),_sura.get("suraId"));
     }
  
    // @Override
-    public void onResume() {
-    
-     super.onResume();
-     if(SuraslistManager.reciterId!=null && SuraslistManager.reciterId != reciter_id)
-     {
-    	 
-    	 loadSuras();
-    
-     }else
-     {
-    	  if( reciter_id !="-1" && surasList!=null && !surasList.isEmpty())
-    	    Toast.makeText(SurasActivity.this,surasList.get(0).get("reciterNameAr")+ " - "+surasList.get(0).get("reciterNameEn"), Toast.LENGTH_SHORT).show();
-    	  if(reciter_id !="-1" && (surasList==null || surasList.isEmpty()))
-    	  {
-    		  loadSuras();
-    	  }
-     }
+    public void onResume() 
+    {
+	     super.onResume();
+	     if(SuraslistManager.reciterId!=null && SuraslistManager.reciterId != reciter_id)
+	     {
+	    	 loadSuras();
+	    
+	     }else
+	     {
+	    	  if( reciter_id !="-1" && surasList!=null && !surasList.isEmpty())
+	    	    Toast.makeText(SurasActivity.this,surasList.get(0).get("reciterNameAr")+ " - "+surasList.get(0).get("reciterNameEn"), Toast.LENGTH_SHORT).show();
+	    	  if(reciter_id !="-1" && (surasList==null || surasList.isEmpty()))
+	    	  {
+	    		  loadSuras();
+	    	  }
+	     }
     }
    private void loadSuras()
    {
@@ -209,6 +232,8 @@ public class SurasActivity extends Activity {
 					mP3Quran.loadMediaPlayer(0);
 	        	  }
 	        	});
+        	//View footerView = ((LayoutInflater) SurasActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.ly_sura_footer, null, false);
+        	//listView.addFooterView(footerView);
 
         }
       }
@@ -261,7 +286,7 @@ public class SurasActivity extends Activity {
   		          }
   		        
   		        
-  		        
+  		     
   		        
   		        
   		     
@@ -319,6 +344,13 @@ public class SurasActivity extends Activity {
             	if (!folder.exists()) {
             	    success = folder.mkdir();
             	}
+            	folder = new File(Environment.getExternalStorageDirectory() + "/MP3Quran/"+sUrl[2]);
+            	
+            	if (!folder.exists()) {
+            	    success = folder.mkdir();
+            	}
+            	 
+            	 
                 URL url = new URL(sUrl[0]);
                 URLConnection connection = url.openConnection();
                 connection.connect();
@@ -327,7 +359,7 @@ public class SurasActivity extends Activity {
 
                 // download the file
                 InputStream input = new BufferedInputStream(url.openStream());
-                OutputStream output = new FileOutputStream("/sdcard/MP3Quran/"+sUrl[1]);
+                OutputStream output = new FileOutputStream("/sdcard/MP3Quran/"+sUrl[2]+"/"+sUrl[3]+".mp3");
 
                 byte data[] = new byte[1024];
                 long total = 0;
@@ -406,7 +438,7 @@ public class SurasActivity extends Activity {
     }
     public void ShowErrorDialog()
     {
-    	showAlertDialog(this, "No Internet Connection",
+    	showAlertDialog(SurasActivity.this, "No Internet Connection",
 				"You don't have internet connection.", false);
     }
     private void showAlertDialog(Context context, String title, String message, Boolean status) 
@@ -437,6 +469,36 @@ public class SurasActivity extends Activity {
 		    } });
 		alertDialog.show();
 	}
+private void  ShowRenameDialog(HashMap<String, String> _sura) {
+    	
+	    final HashMap<String, String> __sura = _sura;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Sura "+_sura.get("suraNameAr")+" - "+_sura.get("suraNameEn")+" is already exist!!");
+        
+         
+         builder.setPositiveButton("Re-Download", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				DownloadSura(__sura);
+				 dialog.cancel();
+				
+			}
+		});
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+ 
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            	dialog.cancel();
+                return;
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        
+		// show it
+		alertDialog.show();
+      
+    }
    
 
     
