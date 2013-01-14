@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lySuraItem"
+    style="@style/AddressBookListItem"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_selector_pin"
+    android:orientation="horizontal"
+    android:padding="5dip" >
+
+  	<ImageView
+  	    android:id="@+id/sura_icon"
+  	    style="@style/AddressBookImageItem"
+  	    android:layout_alignParentLeft="true"
+  	    android:layout_centerVertical="true"
+  	    android:src="@drawable/ic_list_call"
+  	    android:text="Phone Call" />
+
+	<!-- Artist Name -->
+
+  	<TextView
+  	    android:id="@+id/sura_name"
+  	    android:layout_width="wrap_content"
+  	    android:layout_height="wrap_content"
+  	    android:layout_alignParentTop="true"
+  	    android:layout_marginLeft="15dp"
+  	    android:layout_toRightOf="@+id/sura_icon"
+  	    android:text="Reciter Name"
+  	    android:textColor="#060606"
+  	    android:textSize="18sp"
+  	    android:textStyle="bold"
+  	    android:typeface="sans" />
+
+  	<TextView
+  	    android:id="@+id/reciter_name"
+  	    android:layout_width="fill_parent"
+  	    android:layout_height="wrap_content"
+  	    android:layout_alignLeft="@+id/sura_name"
+  	    android:layout_alignParentRight="true"
+  	    android:layout_below="@+id/sura_name"
+  	    android:text="Suras Name ..."
+  	    android:textColor="#343434"
+  	    android:textSize="13sp" />
+
+  	<ImageView
+  	    android:id="@+id/pin_icon"
+  	    style="@style/AddressBookImageItem"
+  	    android:layout_alignParentRight="true"
+  	    android:layout_centerVertical="true"
+  	    android:src="@drawable/pin_icon"
+  	     />
+  
+</RelativeLayout>
