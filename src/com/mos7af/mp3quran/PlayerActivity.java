@@ -612,33 +612,37 @@ public class PlayerActivity extends Activity implements OnCompletionListener, Se
 	    }
 	    private void showAlertDialog(Context context, String title, String message, Boolean status) 
 	    {
-			AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+	    	
+	    	if (((Activity) context).isFinishing() == false) {
+	    		AlertDialog alertDialog = new AlertDialog.Builder(context).create();
 
-			// Setting Dialog Title
-			alertDialog.setTitle(title);
+				// Setting Dialog Title
+				alertDialog.setTitle(title);
 
-			// Setting Dialog Message
-			alertDialog.setMessage(message);
-			
-			// Setting alert dialog icon
-			alertDialog.setIcon( R.drawable.fail);
+				// Setting Dialog Message
+				alertDialog.setMessage(message);
 				
-			 alertDialog.setButton("Try Again!!", new DialogInterface.OnClickListener() {
-			      public void onClick(DialogInterface dialog, int which) {
-			 
-			    	  if(Utils.isConnectingToInternet(PlayerActivity.this))
-			          {
-			    		  mp.release();
-			            CreateMediaPlayer();
-			    		 playSong(currentSongIndex);
-			          	
-			          }else
-			          {
-			        	  ShowErrorDialog();
-			          }
-			 
-			    } });
-			alertDialog.show();
+				// Setting alert dialog icon
+				alertDialog.setIcon( R.drawable.fail);
+					
+				 alertDialog.setButton("Try Again!!", new DialogInterface.OnClickListener() {
+				      public void onClick(DialogInterface dialog, int which) {
+				 
+				    	  if(Utils.isConnectingToInternet(PlayerActivity.this))
+				          {
+				    		  mp.release();
+				            CreateMediaPlayer();
+				    		 playSong(currentSongIndex);
+				          	
+				          }else
+				          {
+				        	  ShowErrorDialog();
+				          }
+				 
+				    } });
+				alertDialog.show();
+	    	}
+			
 		}
 	
 }

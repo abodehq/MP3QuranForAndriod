@@ -13,6 +13,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 public class RecitersActivity extends Activity {
@@ -21,11 +23,23 @@ public class RecitersActivity extends Activity {
     ReciterItemAdapter reciterItemAdapter;
     private RecitersActivity _scope;
     private GetTask getTask;
+    private ProgressBar loading;
     private ArrayList<HashMap<String, String>> recitersList;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ly_reciters);
         _scope = this;
+        RelativeLayout relativeclic1 =(RelativeLayout)findViewById(R.id.footer);
+        relativeclic1.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+            	list.setAdapter(null);
+            	getTask.cancel(true);
+            	getTask = new GetTask();
+                getTask.execute(); 
+            }
+        });
+        loading=(ProgressBar)findViewById(R.id.loading);
         getTask = new GetTask();
         getTask.execute(); 
     }
@@ -40,8 +54,8 @@ public class RecitersActivity extends Activity {
         protected void onPostExecute(ReturnModel result) {
 
           
-        	ProgressBar loading=(ProgressBar)findViewById(R.id.loading);;
-        	loading.setVisibility(View.GONE);
+        	
+        	//loading.setVisibility(View.INVISIBLE);
         	recitersList = result.getheadlines();
 			list= (ListView)findViewById(R.id.list);
 	  		
@@ -73,8 +87,8 @@ public class RecitersActivity extends Activity {
     private ReturnModel GetData()
     {
     	
-    	ProgressBar loading=(ProgressBar)findViewById(R.id.loading);;
-    	loading.setVisibility(View.VISIBLE);
+    	
+    //	loading.setVisibility(View.VISIBLE);
     	recitersList = new ArrayList<HashMap<String, String>>();
 
   		

@@ -37,10 +37,18 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:paddingLeft="2dp"
-            android:text="mos7af.com"
+            android:text="ReLoad"
             android:textColor="#04b3d2"
             android:textSize="16dp"
             android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/list_image"
+            android:layout_width="30dip"
+            android:layout_height="30dip"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/songTitle"
+            android:src="@drawable/reload" />
 
     </RelativeLayout>
   
