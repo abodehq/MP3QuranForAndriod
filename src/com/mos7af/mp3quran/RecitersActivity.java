@@ -29,6 +29,7 @@ public class RecitersActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ly_reciters);
         _scope = this;
+        list= (ListView)findViewById(R.id.list);
         RelativeLayout relativeclic1 =(RelativeLayout)findViewById(R.id.footer);
         relativeclic1.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -57,7 +58,7 @@ public class RecitersActivity extends Activity {
         	
         	//loading.setVisibility(View.INVISIBLE);
         	recitersList = result.getheadlines();
-			list= (ListView)findViewById(R.id.list);
+			
 	  		
 			 reciterItemAdapter = new ReciterItemAdapter(_scope, recitersList);    
 	        

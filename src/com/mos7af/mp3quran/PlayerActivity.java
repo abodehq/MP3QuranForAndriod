@@ -574,7 +574,15 @@ public class PlayerActivity extends Activity implements OnCompletionListener, Se
 	  			}
 	  			// Toast.makeText(PlayerActivity.this ,songPath, Toast.LENGTH_SHORT).show();
 	  			mp.reset();
-				mp.setDataSource(songPath);
+	  		
+
+	  			try {
+	  			   mp.setDataSource(songPath);
+	  			} catch (IllegalStateException e) {
+	  			   mp.reset();
+	  			   mp.setDataSource(songPath);
+	  			}
+				
 				mp.prepare();   
 	  		        
 	  		        
